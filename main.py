@@ -12,7 +12,7 @@ def load_data():
 
 @app.get("/")
 def hello():
-    return {"message": "Patient Management system API"}
+    return 
 
 @app.get("/about")
 def about():
