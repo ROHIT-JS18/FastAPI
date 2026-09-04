@@ -1,5 +1,5 @@
 import json
-from fastapi import FastAPI, Path, HTTPException , Query
+from fastapi import FastAPI, Path, HTTPException, Query
 
 app = FastAPI()
 
@@ -48,20 +48,43 @@ def view_patient(
         detail="Patient not found"
     )
 
-@app.get('/sort')
-def sort_patients(sort_by:str = Query(...,description="Sort on basis of height , weight and BMI"),order:str=Query('asc',description='sort in asc or desc order')):
-    valid_fields =['height','weight','bmi']
 
+@app.get("/sort")
+def sort_patients(
+    sort_by: str = Query(
+        ...,
+        description="Sort on the basis of height, weight and BMI"
+    ),
+    order: str = Query(
+        "asc",
+        description="Sort in asc or desc order"
+    )
+):
+    valid_fields = ["height", "weight", "bmi"]
+
+    # Check valid field
     if sort_by not in valid_fields:
-        raise HTTPException(status_code=400,detail="Invalid field select from {valid_fields}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid field. Select from {valid_fields}"
+        )
 
-    if order not in ['asc','desc']:
-        raise HTTPException(status_code=400,detail="Invalid field select from asc or desc")
+    # Check valid order
+    if order not in ["asc", "desc"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid order. Select from 'asc' or 'desc'"
+        )
 
     data = load_data()
-    sort_order = True if order=="desc" else False
 
-    sorted_data = sorted(data.values(),key=lambda x:x.get(sort_by,0),reverse=sort_order)
+    # desc = True, asc = False
+    sort_order = True if order == "desc" else False
 
-    return sort_order , sorted_data
+    sorted_data = sorted(
+        data.values(),
+        key=lambda x: x.get(sort_by, 0),
+        reverse=sort_order
+    )
 
+    return sorted_data
